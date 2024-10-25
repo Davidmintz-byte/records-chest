@@ -1,0 +1,833 @@
+body {
+  background-color: #f0e6d2; /* Light wooden color */
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #d2b48c; /* Darker wooden color */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.header {
+  text-align: center;
+  color: #8b4513; /* Dark brown for text */
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+
+.register-container {
+  background-color: #e6ccb2; /* Light wooden color */
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.register-container h2 {
+  color: #8b4513; /* Dark brown for text */
+  margin-bottom: 20px;
+}
+
+.register-container form div {
+  margin-bottom: 15px;
+}
+
+.register-container label {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b4513;
+}
+
+.register-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d2b48c;
+  border-radius: 4px;
+}
+
+.register-container button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.register-container button:hover {
+  background-color: #a0522d;
+}
+
+
+.add-album-container {
+  background-color: #e6ccb2; /* Light wooden color */
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.add-album-container h2 {
+  color: #8b4513; /* Dark brown for text */
+  margin-bottom: 20px;
+}
+
+.add-album-container form div {
+  margin-bottom: 15px;
+}
+
+.add-album-container label {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b4513;
+}
+
+.add-album-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d2b48c;
+  border-radius: 4px;
+}
+
+.add-album-container button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-album-container button:hover {
+  background-color: #a0522d;
+}
+
+/* Authentication container styles */
+.auth-button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  margin: 15px auto;
+}
+
+.auth-button:hover {
+  background-color: #a0522d;
+}
+
+/* Error message styles */
+.error-message {
+  color: #d63301;
+  background-color: #ffccba;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border: 1px solid #d63301;
+}
+
+/* Main container spacing */
+main {
+  padding: 20px;
+}
+
+/* Navigation bar styles */
+.nav-bar {
+  background-color: #8b4513;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-brand {
+  color: #f0e6d2;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-button {
+  background-color: transparent;
+  color: #f0e6d2;
+  border: 2px solid #f0e6d2;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #f0e6d2;
+  color: #8b4513;
+}
+
+.nav-button.logout {
+  border-color: #ff9999;
+  color: #ff9999;
+}
+
+.nav-button.logout:hover {
+  background-color: #ff9999;
+  color: #8b4513;
+}
+
+.nav-button.active {
+  background-color: #f0e6d2;
+  color: #8b4513;
+}
+
+/* Collection container and wooden box styles */
+.collection-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.record-box {
+  background-color: #8b4513;
+  border: 15px solid #654321;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 400px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* Album grid layout */
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Individual album card styles */
+.album-card {
+  background-color: #d2b48c;
+  border-radius: 5px;
+  padding: 10px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.album-card:hover {
+  transform: translateY(-5px);
+}
+
+.album-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.album-info {
+  padding: 10px 0;
+}
+
+.album-info h3 {
+  color: #4a2500;
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+.album-info p {
+  color: #654321;
+  margin: 3px 0;
+  font-size: 0.9em;
+}
+
+/* Empty collection state */
+.empty-collection {
+  text-align: center;
+  color: #f0e6d2;
+  padding: 40px;
+  font-size: 1.2em;
+}
+
+/* Loading and error states */
+.loading, .error {
+  text-align: center;
+  padding: 40px;
+  color: #8b4513;
+  font-size: 1.2em;
+}
+
+.error {
+  color: #d63301;
+}
+
+/* Message styles for AddAlbum component */
+.success-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Add Album styles */
+.apple-music-form {
+  background-color: #f8f4f0;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.primary-button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1em;
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+.primary-button:hover {
+  background-color: #654321;
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: #999;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 0.9em;
+  text-decoration: underline;
+}
+
+.secondary-button:hover {
+  color: #666;
+}
+
+/* Rest of the form styles */
+.manual-entry-form {
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  width: 100%;
+}
+
+/* Album grid layout */
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Album card styles */
+.album-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.album-card:hover {
+  transform: translateY(-5px);
+}
+
+.album-artwork {
+  width: 100%;
+  position: relative;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+}
+
+.album-artwork img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.album-info {
+  padding: 15px;
+}
+
+.album-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.album-info .artist {
+  color: #666;
+  margin: 0 0 5px 0;
+}
+
+.album-info .year,
+.album-info .genre {
+  color: #888;
+  font-size: 0.9em;
+  margin: 2px 0;
+}
+
+.apple-music-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #8b4513;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.apple-music-link:hover {
+  text-decoration: underline;
+}
+
+/* Empty collection state */
+.empty-collection {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* Collection layout */
+.collection-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Album grid with record box styling */
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background: #8b4513;  /* Dark wood color */
+  border: 15px solid #654321;  /* Darker wood border */
+  border-radius: 8px;
+  box-shadow: 
+    inset 0 0 50px rgba(0,0,0,0.5),
+    0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Album card styling */
+.album-card {
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.album-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Album artwork container */
+.album-artwork {
+  position: relative;
+  padding-top: 100%;  /* 1:1 Aspect ratio */
+  background: #f0f0f0;
+}
+
+.album-artwork img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Album info section */
+.album-info {
+  padding: 15px;
+  background: white;
+}
+
+.album-info h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist {
+  color: #666;
+  margin: 5px 0;
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.year, .genre {
+  color: #888;
+  font-size: 0.8em;
+  margin: 2px 0;
+}
+
+/* Apple Music link styling */
+.apple-music-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #8b4513;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.apple-music-link:hover {
+  text-decoration: underline;
+}
+
+/* Empty collection state */
+.empty-collection {
+  text-align: center;
+  padding: 40px;
+  color: #f0e6d2;
+  font-size: 1.2em;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #8b4513;
+  font-size: 1.2em;
+}
+
+/* Tag styling */
+.album-tags {
+  padding: 10px 0;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.tag {
+  background-color: #f0e6d2;
+  color: #8b4513;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #8b4513;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.remove-tag:hover {
+  color: #654321;
+}
+
+.add-tag-form {
+  display: flex;
+  gap: 5px;
+}
+
+.tag-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.add-tag-button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.add-tag-button:hover {
+  background-color: #654321;
+}
+
+.tag-error {
+  color: #d63301;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.tag-input-container {
+  position: relative;
+  flex: 1;
+}
+
+.tag-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tag-suggestion {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tag-suggestion:hover {
+  background-color: #f0e6d2;
+}
+
+.search-bar {
+  margin: 20px 0;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #d2b48c;
+  border-radius: 4px;
+  background-color: white;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #8b4513;
+}
+
+.edit-album-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 500px;
+  z-index: 1000;
+}
+
+.edit-album-form h3 {
+  margin-bottom: 20px;
+  color: #8b4513;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-button, .cancel-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.save-button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+}
+
+.save-button:hover {
+  background-color: #654321;
+}
+
+.cancel-button:hover {
+  background-color: #e5e5e5;
+}
+
+/* Overlay background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+.album-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  color: #8b4513;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.9em;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.edit-button:hover {
+  opacity: 1;
+}
+
+.album-card:hover .edit-button {
+  opacity: 1;
+}
+
+.artwork-section {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.artwork-preview {
+  max-width: 200px;
+  max-height: 200px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.current-artwork {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.artwork-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.change-image-button,
+.remove-image-button,
+.add-image-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.change-image-button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+}
+
+.remove-image-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+.add-image-button {
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+}
+
+.change-image-button:hover,
+.add-image-button:hover {
+  background-color: #654321;
+}
+
+.remove-image-button:hover {
+  background-color: #d32f2f;
+}
