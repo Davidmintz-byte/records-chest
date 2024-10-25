@@ -61,11 +61,10 @@ def handle_preflight():
     if request.method == "OPTIONS":
         origin = request.headers.get('Origin')
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Origin", origin)
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS, PUT")
         return response
-        
 
 # Models
 class User(db.Model):
