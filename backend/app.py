@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, send_from_directory
+from flask import Flask, request, jsonify, make_response, send_from_directory, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
@@ -11,7 +11,7 @@ from os import environ
 from flask import request
 from bs4 import BeautifulSoup
 import requests
-
+from flask import send_from_directory
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -54,6 +54,17 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
+@app.route('/')
+def serve():
+    return send_from_directory('frontend/build', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    if path != "" and os.path.exists("frontend/build/" + path):
+        return send_from_directory('frontend/build', path)
+    else:
+        return send_from_directory('frontend/build', 'index.html')
+
 # Add this decorator to handle OPTIONS requests globally
 
 @app.before_request
@@ -95,6 +106,18 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Routes
+
+@app.route('/')
+def serve():
+    return send_from_directory('frontend/build', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    if path != "" and os.path.exists("frontend/build/" + path):
+        return send_from_directory('frontend/build', path)
+    else:
+        return send_from_directory('frontend/build', 'index.html')
+    
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
