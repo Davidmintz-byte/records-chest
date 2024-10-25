@@ -54,6 +54,8 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
+
+
 # Add this decorator to handle OPTIONS requests globally
 
 @app.before_request
@@ -344,20 +346,22 @@ def add_album():
         user_id=user.id
     )
     
-def serve_frontend():
-    return send_from_directory('frontend/build', 'index.html')
-
-@app.route('/<path:path>')
-def serve_frontend_static(path):
-    if path != "" and os.path.exists("frontend/build/" + path):
-        return send_from_directory('frontend/build', path)
-    else:
-        return send_from_directory('frontend/build', 'index.html')
     
     db.session.add(new_album)
     db.session.commit()
     
     return jsonify({"message": "Album added successfully"}), 201
+
+@app.route('/')
+def serve():
+    return send_from_directory('frontend/build', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    if path != "" and os.path.exists("frontend/build/" + path):
+        return send_from_directory('frontend/build', path)
+    else:
+        return send_from_directory('frontend/build', 'index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
