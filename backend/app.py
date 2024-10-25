@@ -106,6 +106,12 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Routes
+@app.route('/')
+def test_route():
+    return jsonify({
+        "message": "Record Chest API is running!",
+        "status": "success"
+    }), 200
 
 @app.route('/register', methods=['POST'])
 def register():
