@@ -54,17 +54,6 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-@app.route('/')
-def serve():
-    return send_from_directory('frontend/build', 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    if path != "" and os.path.exists("frontend/build/" + path):
-        return send_from_directory('frontend/build', path)
-    else:
-        return send_from_directory('frontend/build', 'index.html')
-
 # Add this decorator to handle OPTIONS requests globally
 
 @app.before_request
@@ -106,13 +95,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Routes
-@app.route('/')
-def test_route():
-    return jsonify({
-        "message": "Record Chest API is running!",
-        "status": "success"
-    }), 200
-
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -361,18 +343,16 @@ def add_album():
         artwork=data.get('artwork'),  # Add this line
         user_id=user.id
     )
-
-@app.route('/')
-def serve_frontend(): 
+    
+def serve_frontend():
     return send_from_directory('frontend/build', 'index.html')
 
 @app.route('/<path:path>')
-def serve_frontend_static(path):  
+def serve_frontend_static(path):
     if path != "" and os.path.exists("frontend/build/" + path):
         return send_from_directory('frontend/build', path)
     else:
         return send_from_directory('frontend/build', 'index.html')
-    
     
     db.session.add(new_album)
     db.session.commit()
