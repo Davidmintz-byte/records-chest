@@ -51,15 +51,18 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 # Add this decorator to handle OPTIONS requests globally
+from flask import request
+
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
+        origin = request.headers.get('Origin')
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Origin", origin)
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS, PUT")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         return response
-
+    
 # Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
