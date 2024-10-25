@@ -1,5 +1,6 @@
 // Import necessary hooks from React
 import React, { useState } from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 // Define the Login component with onLoginSuccess prop
 function Login({ onLoginSuccess }) {
@@ -14,14 +15,15 @@ function Login({ onLoginSuccess }) {
     e.preventDefault();
     setError(''); // Clear any previous errors
     
-    try {
-      const response = await fetch('http://localhost:5000/login', {
+
+try {
+    const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-      });
+    });
       
       const data = await response.json();
       

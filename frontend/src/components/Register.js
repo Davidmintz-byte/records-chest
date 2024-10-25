@@ -1,5 +1,6 @@
 // Import necessary hooks from React
 import React, { useState } from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 // Define the Register component
 function Register() {
@@ -11,7 +12,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

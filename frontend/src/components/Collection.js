@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import AlbumTags from './AlbumTags';
 import SearchBar from './SearchBar';
 import EditAlbum from './EditAlbum';  
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 
 function Collection({ refresh }) {
@@ -26,7 +27,7 @@ function Collection({ refresh }) {
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('http://localhost:5000/albums', {
+      const response = await fetch(`${API_URL}/albums`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

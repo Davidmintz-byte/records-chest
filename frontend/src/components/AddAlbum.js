@@ -1,5 +1,6 @@
 // Import necessary hooks from React
 import React, { useState } from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 // Define the AddAlbum component
 function AddAlbum({ onAlbumAdded }) {
@@ -24,7 +25,7 @@ function AddAlbum({ onAlbumAdded }) {
     if (link.includes('music.apple.com')) {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:5000/fetch-album-data', {
+        const response = await fetch('${API_URL}/fetch-album-data', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ function AddAlbum({ onAlbumAdded }) {
     setMessage('');
     
     try {
-      const response = await fetch('http://localhost:5000/add_album', {
+      const response = await fetch('${API_URL}/add_album', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

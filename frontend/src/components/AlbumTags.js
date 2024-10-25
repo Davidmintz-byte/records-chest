@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 function AlbumTags({ albumId, tags, onTagsUpdate }) {
   const [newTag, setNewTag] = useState('');
@@ -15,7 +16,7 @@ function AlbumTags({ albumId, tags, onTagsUpdate }) {
   const fetchExistingTags = async () => {
     try {
       console.log('Fetching existing tags...');
-      const response = await fetch('http://localhost:5000/user/tags', {
+      const response = await fetch(`${API_URL}/user/tags`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -68,7 +69,7 @@ function AlbumTags({ albumId, tags, onTagsUpdate }) {
     if (!newTag.trim()) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/albums/${albumId}/tags`, {
+      const response = await fetch(`${API_URL}/albums/${albumId}/tags`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ function AlbumTags({ albumId, tags, onTagsUpdate }) {
 
   const handleRemoveTag = async (tagId) => {
     try {
-      const response = await fetch(`http://localhost:5000/albums/${albumId}/tags/${tagId}`, {
+      const response = await fetch(`${API_URL}/${albumId}/tags/${tagId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

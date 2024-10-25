@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 function SearchBar({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState('');

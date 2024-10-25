@@ -1,5 +1,6 @@
 // Import React
 import React from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 // Define the NavBar component
 function NavBar({ onLogout, onNavigate, currentView }) {

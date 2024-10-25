@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { API_URL } from '../config';  // adjust the path based on your file location
 
 function EditAlbum({ album, onSave, onCancel }) {
   const [name, setName] = useState(album.name);
@@ -22,7 +23,7 @@ function EditAlbum({ album, onSave, onCancel }) {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/upload-image', {
+      const response = await fetch(`${API_URL}/upload-image`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -33,7 +34,7 @@ function EditAlbum({ album, onSave, onCancel }) {
       const data = await response.json();
 
       if (response.ok) {
-        setArtwork(`http://localhost:5000${data.imageUrl}`);
+        setArtwork(`${API_URL}${data.imageUrl}`);
       } else {
         setError(data.error || 'Failed to upload image');
       }
@@ -55,7 +56,7 @@ function EditAlbum({ album, onSave, onCancel }) {
     e.preventDefault();
     
     try {
-      const response = await fetch(`http://localhost:5000/albums/${album.id}`, {
+      const response = await fetch(`${API_URL}/albums/${album.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

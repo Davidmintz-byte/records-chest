@@ -7,15 +7,21 @@ from flask_cors import CORS
 import os
 import time
 from werkzeug.utils import secure_filename
+from os import environ
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Get environment variables
+DATABASE_URL = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
+JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
+FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
 
 # Configure CORS
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:3000"],
+        "origins": [FRONTEND_URL],
         "methods": ["GET", "POST", "DELETE", "OPTIONS", "PUT"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
@@ -26,10 +32,12 @@ CORS(app, resources={
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+
+
 # Basic configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///record_chest.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Create uploads directory if it doesn't exist
