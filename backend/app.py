@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, send_from_directory, send_file
+from flask import Flask, request, jsonify, make_response, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
@@ -8,18 +8,19 @@ import os
 import time
 from werkzeug.utils import secure_filename
 from os import environ
-from flask import request
-from bs4 import BeautifulSoup
-import requests
-from flask import send_from_directory
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Get environment variables first
+DATABASE_URL = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
+JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
+FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
 
 # Initialize Flask app
 app = Flask(__name__)
-
-# Get environment variables
-DATABASE_URL = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
-JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
-FRONTEND_URL = environ.get('FRONTEND_URL') or 'http://localhost:3000'
 
 # Configure CORS
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -36,12 +37,10 @@ CORS(app, resources={
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-
-
 # Basic configurations
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Create uploads directory if it doesn't exist
@@ -54,19 +53,20 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-
-
 # Add this decorator to handle OPTIONS requests globally
-
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
-        origin = request.headers.get('Origin')
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", origin)
+        response.headers.add("Access-Control-Allow-Origin", FRONTEND_URL)
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS, PUT")
         return response
+
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Models
 class User(db.Model):
@@ -91,12 +91,7 @@ class Tag(db.Model):
     album_id = db.Column(db.Integer, db.ForeignKey('album.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# Helper function to check allowed file extensions
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Routes
+# API Routes
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -204,28 +199,18 @@ def get_albums():
 @jwt_required()
 def add_tag(album_id):
     try:
-        print("=== Debug: Starting add_tag function ===")
-        print(f"Album ID: {album_id}")
-        
         current_user = get_jwt_identity()
         user = User.query.filter_by(email=current_user).first()
         if not user:
-            print("User not found")
             return jsonify({"error": "User not found"}), 401
             
         album = Album.query.filter_by(id=album_id, user_id=user.id).first()
-        print(f"Album found: {album is not None}")
-        
         if not album:
-            print(f"Album {album_id} not found or doesn't belong to user")
             return jsonify({"error": "Album not found"}), 404
 
         data = request.get_json()
-        print(f"Received data: {data}")
-        
         tag_name = data.get('name')
         if not tag_name:
-            print("No tag name provided")
             return jsonify({"error": "Tag name is required"}), 400
 
         new_tag = Tag(
@@ -236,7 +221,6 @@ def add_tag(album_id):
         
         db.session.add(new_tag)
         db.session.commit()
-        print(f"Tag created successfully with id: {new_tag.id}")
         
         return jsonify({
             "message": "Tag added successfully",
@@ -245,7 +229,6 @@ def add_tag(album_id):
         }), 201
         
     except Exception as e:
-        print(f"Error in add_tag: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/albums/<int:album_id>/tags/<int:tag_id>', methods=['DELETE'])
@@ -287,77 +270,16 @@ def get_user_tags():
         return jsonify(tag_names), 200
         
     except Exception as e:
-        print(f"Error fetching tags: {str(e)}")
+        logger.error(f"Error fetching tags: {str(e)}")
         return jsonify({"error": str(e)}), 500
-    
 
-@app.route('/fetch-album-data', methods=['POST'])
-@jwt_required()
-def fetch_album_data():
-    try:
-        data = request.get_json()
-        url = data['url']
-        
-        # Fetch the webpage content
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Extract album information from meta tags
-        title_meta = soup.find('meta', property='og:title')['content']
-        # Split the title to separate album name and artist
-        # Format is usually "Album Name by Artist on Apple Music"
-        album_name = title_meta.split(' by ')[0]
-        artist = title_meta.split(' by ')[1].split(' on ')[0]
-        
-        # Get description which might contain year
-        description = soup.find('meta', property='og:description')['content']
-        # Try to extract year from description (usually in format "Album · Year")
-        year = None
-        if ' · ' in description:
-            year_part = description.split(' · ')[1]
-            if year_part.isdigit():
-                year = year_part
-        
-        return jsonify({
-            'name': album_name,
-            'artist': artist,
-            'year': year,
-            'genre': None  # Genre isn't readily available in meta tags
-        })
-        
-    except Exception as e:
-        print(f"Error fetching album data: {str(e)}")  # For debugging
-        return jsonify({"error": "Failed to fetch album data"}), 500
-    
-@app.route('/add_album', methods=['POST'])
-@jwt_required()
-def add_album():
-    data = request.get_json()
-    current_user = get_jwt_identity()
-    user = User.query.filter_by(email=current_user).first()
-    
-    new_album = Album(
-        name=data['name'],
-        artist=data['artist'],
-        year=data.get('year'),
-        genre=data.get('genre'),
-        apple_music_link=data.get('appleMusicLink'),
-        artwork=data.get('artwork'),  # Add this line
-        user_id=user.id
-    )
-    
-    
-    db.session.add(new_album)
-    db.session.commit()
-    
-    return jsonify({"message": "Album added successfully"}), 201
-
+# Frontend serving routes (must be last)
 @app.route('/')
-def serve():
+def serve_frontend():
     return send_from_directory('frontend/build', 'index.html')
 
 @app.route('/<path:path>')
-def serve_static(path):
+def serve_frontend_static(path):
     if path != "" and os.path.exists("frontend/build/" + path):
         return send_from_directory('frontend/build', path)
     else:
