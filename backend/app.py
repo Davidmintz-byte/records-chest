@@ -107,17 +107,6 @@ def allowed_file(filename):
 
 # Routes
 
-@app.route('/')
-def serve():
-    return send_from_directory('frontend/build', 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    if path != "" and os.path.exists("frontend/build/" + path):
-        return send_from_directory('frontend/build', path)
-    else:
-        return send_from_directory('frontend/build', 'index.html')
-    
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -366,6 +355,18 @@ def add_album():
         artwork=data.get('artwork'),  # Add this line
         user_id=user.id
     )
+
+@app.route('/')
+def serve_frontend(): 
+    return send_from_directory('frontend/build', 'index.html')
+
+@app.route('/<path:path>')
+def serve_frontend_static(path):  
+    if path != "" and os.path.exists("frontend/build/" + path):
+        return send_from_directory('frontend/build', path)
+    else:
+        return send_from_directory('frontend/build', 'index.html')
+    
     
     db.session.add(new_album)
     db.session.commit()
