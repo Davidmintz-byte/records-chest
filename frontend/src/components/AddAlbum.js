@@ -25,7 +25,7 @@ function AddAlbum({ onAlbumAdded }) {
     if (link.includes('music.apple.com')) {
       setIsLoading(true);
       try {
-        const response = await fetch('${API_URL}/fetch-album-data', {
+        const response = await fetch(`${API_URL}/fetch-album-data`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ function AddAlbum({ onAlbumAdded }) {
     setMessage('');
     
     try {
-      const response = await fetch('${API_URL}/add_album', {
+      const response = await fetch(`${API_URL}/add_album`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

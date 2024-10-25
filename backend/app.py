@@ -8,6 +8,10 @@ import os
 import time
 from werkzeug.utils import secure_filename
 from os import environ
+from flask import request
+from bs4 import BeautifulSoup
+import requests
+
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -51,18 +55,18 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 # Add this decorator to handle OPTIONS requests globally
-from flask import request
 
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
         origin = request.headers.get('Origin')
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", origin)
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS, PUT")
         return response
-    
+        
+
 # Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -284,6 +288,67 @@ def get_user_tags():
     except Exception as e:
         print(f"Error fetching tags: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/fetch-album-data', methods=['POST'])
+@jwt_required()
+def fetch_album_data():
+    try:
+        data = request.get_json()
+        url = data['url']
+        
+        # Fetch the webpage content
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Extract album information from meta tags
+        title_meta = soup.find('meta', property='og:title')['content']
+        # Split the title to separate album name and artist
+        # Format is usually "Album Name by Artist on Apple Music"
+        album_name = title_meta.split(' by ')[0]
+        artist = title_meta.split(' by ')[1].split(' on ')[0]
+        
+        # Get description which might contain year
+        description = soup.find('meta', property='og:description')['content']
+        # Try to extract year from description (usually in format "Album · Year")
+        year = None
+        if ' · ' in description:
+            year_part = description.split(' · ')[1]
+            if year_part.isdigit():
+                year = year_part
+        
+        return jsonify({
+            'name': album_name,
+            'artist': artist,
+            'year': year,
+            'genre': None  # Genre isn't readily available in meta tags
+        })
+        
+    except Exception as e:
+        print(f"Error fetching album data: {str(e)}")  # For debugging
+        return jsonify({"error": "Failed to fetch album data"}), 500
+    
+@app.route('/add_album', methods=['POST'])
+@jwt_required()
+def add_album():
+    data = request.get_json()
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    
+    new_album = Album(
+        name=data['name'],
+        artist=data['artist'],
+        year=data.get('year'),
+        genre=data.get('genre'),
+        apple_music_link=data.get('appleMusicLink'),
+        artwork=data.get('artwork'),  # Add this line
+        user_id=user.id
+    )
+    
+    db.session.add(new_album)
+    db.session.commit()
+    
+    return jsonify({"message": "Album added successfully"}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
