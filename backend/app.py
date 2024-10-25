@@ -19,7 +19,7 @@ app = Flask(__name__)
 # Get environment variables
 DATABASE_URL = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
 JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
-FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
+FRONTEND_URL = environ.get('FRONTEND_URL') or 'http://localhost:3000'
 
 # Configure CORS
 app.config['CORS_HEADERS'] = 'Content-Type'
