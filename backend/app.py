@@ -388,11 +388,21 @@ def serve_static_files(folder, filename):
 @app.route('/')
 def serve_frontend():
     try:
-        logger.debug("Serving index.html")
+        logger.debug("Trying to serve frontend")
+        logger.debug(f"Current directory: {os.getcwd()}")
+        logger.debug(f"Directory contents: {os.listdir('frontend/build')}")
+        
         return send_from_directory('frontend/build', 'index.html')
     except Exception as e:
         logger.error(f"Error serving index: {str(e)}")
-        return str(e), 500
+        # Return more detailed error for debugging
+        return jsonify({
+            'error': str(e),
+            'cwd': os.getcwd(),
+            'dir_contents': os.listdir(),
+            'build_path_exists': os.path.exists('frontend/build'),
+            'build_contents': os.listdir('frontend/build') if os.path.exists('frontend/build') else []
+        }), 500
 
 @app.route('/<path:path>')
 def serve_frontend_static(path):
