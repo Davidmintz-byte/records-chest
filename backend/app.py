@@ -200,20 +200,25 @@ def get_albums():
 @jwt_required()
 def fetch_album_data():
     try:
+        logger.debug("Starting fetch_album_data")
         data = request.get_json()
         url = data['url']
-        
+        logger.debug(f"Fetching data for URL: {url}")
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         response = requests.get(url, headers=headers)
-        
+        logger.debug(f"Apple Music response status: {response.status_code}")
+        logger.debug("Successfully parsed HTML")
+
         soup = BeautifulSoup(response.text, 'html.parser')
         
         title_meta = soup.find('meta', property='og:title')
+        logger.debug(f"Found title meta: {title_meta}")
+
         description_meta = soup.find('meta', property='og:description')
         image_meta = soup.find('meta', property='og:image')
-        
+        logger.debug(f"Found description meta: {description_meta}")        
         title_content = title_meta['content']
         album_name = title_content.split(' by ')[0]
         artist = title_content.split(' by ')[1].split(' on ')[0]
@@ -227,6 +232,8 @@ def fetch_album_data():
                     year = year_part
 
         artwork_url = image_meta['content'] if image_meta else None
+        logger.debug(f"Found image meta: {artwork_url}")
+
         
         result = {
             'name': album_name,
