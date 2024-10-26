@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app, resources={
     r"/*": {
-        "origins": [FRONTEND_URL],
+        "origins": ["http://localhost:3000", "https://records-chest.onrender.com"],  # Add your Render domain
         "methods": ["GET", "POST", "DELETE", "OPTIONS", "PUT"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
@@ -58,7 +58,8 @@ jwt = JWTManager(app)
 def handle_preflight():
     if request.method == "OPTIONS":
         response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", FRONTEND_URL)
+        if request.headers.get('Origin') in ["http://localhost:3000", "https://records-chest.onrender.com"]:
+            response.headers.add("Access-Control-Allow-Origin", request.headers.get('Origin'))
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS, PUT")
         return response
