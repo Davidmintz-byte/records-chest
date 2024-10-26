@@ -36,6 +36,7 @@ CORS(app, resources={
 # Configuration for file uploads
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+STATIC_FOLDER = os.environ.get('STATIC_FOLDER', 'frontend/build')
 
 # Basic configurations
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
@@ -386,22 +387,29 @@ def serve_static_files(folder, filename):
         return str(e), 500
 
 @app.route('/')
+@app.route('/')
 def serve_frontend():
     try:
-        logger.debug("Trying to serve frontend")
-        logger.debug(f"Current directory: {os.getcwd()}")
-        logger.debug(f"Directory contents: {os.listdir('frontend/build')}")
+        logger.debug(f"Trying to serve frontend from: {STATIC_FOLDER}")
+        logger.debug(f"Build path exists: {os.path.exists(STATIC_FOLDER)}")
         
-        return send_from_directory('frontend/build', 'index.html')
+        if os.path.exists(STATIC_FOLDER):
+            logger.debug(f"Build directory contents: {os.listdir(STATIC_FOLDER)}")
+            return send_from_directory(STATIC_FOLDER, 'index.html')
+        else:
+            return jsonify({
+                'error': 'Build directory not found',
+                'static_folder': STATIC_FOLDER,
+                'cwd': os.getcwd(),
+                'dir_contents': os.listdir()
+            }), 404
+            
     except Exception as e:
         logger.error(f"Error serving index: {str(e)}")
-        # Return more detailed error for debugging
         return jsonify({
             'error': str(e),
             'cwd': os.getcwd(),
-            'dir_contents': os.listdir(),
-            'build_path_exists': os.path.exists('frontend/build'),
-            'build_contents': os.listdir('frontend/build') if os.path.exists('frontend/build') else []
+            'dir_contents': os.listdir()
         }), 500
 
 @app.route('/<path:path>')
