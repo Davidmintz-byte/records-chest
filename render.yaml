@@ -9,5 +9,5 @@ services:
         value: 3.9.6
       - key: FRONTEND_URL
         value: https://records-chest.onrender.com
-      - key: STATIC_FOLDER
-        value: frontend/build  # Can be changed for different hosting services
+      - key: RENDER
+        value: "true"
