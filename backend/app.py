@@ -194,6 +194,29 @@ def get_albums():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/add_album', methods=['POST'])
+@jwt_required()
+def add_album():
+    data = request.get_json()
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    
+    new_album = Album(
+        name=data['name'],
+        artist=data['artist'],
+        year=data.get('year'),
+        genre=data.get('genre'),
+        apple_music_link=data.get('appleMusicLink'),
+        artwork=data.get('artwork'),  # Add this line
+        user_id=user.id
+    )
+    
+    db.session.add(new_album)
+    db.session.commit()
+    
+    return jsonify({"message": "Album added successfully"}), 201
 
 @app.route('/albums/<int:album_id>/tags', methods=['POST'])
 @jwt_required()
@@ -276,14 +299,40 @@ def get_user_tags():
 # Frontend serving routes (must be last)
 @app.route('/')
 def serve_frontend():
-    return send_from_directory('frontend/build', 'index.html')
+    try:
+        logger.debug("Trying to serve frontend")
+        logger.debug(f"Current directory: {os.getcwd()}")
+        build_path = os.path.join(os.getcwd(), 'frontend', 'build')
+        logger.debug(f"Looking for build at: {build_path}")
+        logger.debug(f"Build directory exists: {os.path.exists(build_path)}")
+        
+        if not os.path.exists(build_path):
+            return jsonify({
+                "error": "Build directory not found",
+                "current_dir": os.getcwd(),
+                "build_path": build_path,
+                "directory_contents": os.listdir(os.getcwd())
+            }), 404
+            
+        return send_from_directory('frontend/build', 'index.html')
+    except Exception as e:
+        logger.error(f"Error serving frontend: {str(e)}")
+        return jsonify({
+            "error": str(e),
+            "current_dir": os.getcwd(),
+            "directory_contents": os.listdir(os.getcwd())
+        }), 500
 
 @app.route('/<path:path>')
 def serve_frontend_static(path):
-    if path != "" and os.path.exists("frontend/build/" + path):
-        return send_from_directory('frontend/build', path)
-    else:
-        return send_from_directory('frontend/build', 'index.html')
+    try:
+        if path != "" and os.path.exists(os.path.join('frontend/build', path)):
+            return send_from_directory('frontend/build', path)
+        else:
+            return send_from_directory('frontend/build', 'index.html')
+    except Exception as e:
+        logger.error(f"Error serving static file {path}: {str(e)}")
+        return str(e), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
