@@ -322,29 +322,35 @@ def debug_files():
         })
 
 # Route specifically for static files
-@app.route('/static/<path:filename>')
-def serve_static(filename):
+@app.route('/static/<folder>/<path:filename>')
+def serve_static_files(folder, filename):
     try:
-        logger.debug(f"Serving static file: {filename}")
-        return send_from_directory('frontend/build/static', filename)
+        logger.debug(f"Serving static {folder} file: {filename}")
+        return send_from_directory(f'frontend/build/static/{folder}', filename)
     except Exception as e:
-        logger.error(f"Error serving static file {filename}: {str(e)}")
+        logger.error(f"Error serving static file: {str(e)}")
         return str(e), 500
 
-# Serve index.html for root path
 @app.route('/')
 def serve_frontend():
-    return send_from_directory('frontend/build', 'index.html')
+    try:
+        logger.debug("Serving index.html")
+        return send_from_directory('frontend/build', 'index.html')
+    except Exception as e:
+        logger.error(f"Error serving index: {str(e)}")
+        return str(e), 500
 
-# Catch-all route for other paths
 @app.route('/<path:path>')
 def serve_frontend_static(path):
     try:
+        logger.debug(f"Trying to serve: {path}")
         if os.path.exists(os.path.join('frontend/build', path)):
+            directory = os.path.dirname(path) or '.'
+            filename = os.path.basename(path)
             return send_from_directory('frontend/build', path)
         return send_from_directory('frontend/build', 'index.html')
     except Exception as e:
-        logger.error(f"Error serving path {path}: {str(e)}")
+        logger.error(f"Error serving {path}: {str(e)}")
         return str(e), 500
 
 if __name__ == '__main__':
