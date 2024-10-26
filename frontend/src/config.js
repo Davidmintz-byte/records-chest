@@ -1,5 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL;
-console.log('Current environment:', process.env.NODE_ENV);
+const API_URL = 'https://records-chest.onrender.com';
 console.log('API URL:', API_URL);
 
 export { API_URL };
