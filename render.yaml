@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: records-chest
+    env: python
+    buildCommand: ./build.sh
+    startCommand: cd backend && gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.6
+      - key: FRONTEND_URL
+        value: https://records-chest.onrender.com
