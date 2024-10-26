@@ -4,7 +4,8 @@ import { API_URL } from '../config'; // adjust the path based on your file locat
 
 // Define the AddAlbum component
 function AddAlbum({ onAlbumAdded }) {
-  // State variables for album details
+    console.log('API_URL:', API_URL);
+    // State variables for album details
   const [albumName, setAlbumName] = useState('');
   const [artistName, setArtistName] = useState('');
   const [year, setYear] = useState('');
