@@ -196,6 +196,52 @@ def get_albums():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@app.route('/fetch-album-data', methods=['POST'])
+@jwt_required()
+def fetch_album_data():
+    try:
+        data = request.get_json()
+        url = data['url']
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers)
+        
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        title_meta = soup.find('meta', property='og:title')
+        description_meta = soup.find('meta', property='og:description')
+        image_meta = soup.find('meta', property='og:image')
+        
+        title_content = title_meta['content']
+        album_name = title_content.split(' by ')[0]
+        artist = title_content.split(' by ')[1].split(' on ')[0]
+        
+        year = None
+        if description_meta:
+            description = description_meta['content']
+            if ' · ' in description:
+                year_part = description.split(' · ')[1]
+                if year_part.isdigit():
+                    year = year_part
+
+        artwork_url = image_meta['content'] if image_meta else None
+        
+        result = {
+            'name': album_name,
+            'artist': artist,
+            'year': year,
+            'genre': None,
+            'artwork': artwork_url
+        }
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"Error in fetch_album_data: {str(e)}")
+        return jsonify({"error": f"Failed to fetch album data: {str(e)}"}), 500
+
 
 @app.route('/add_album', methods=['POST'])
 @jwt_required()
