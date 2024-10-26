@@ -326,12 +326,36 @@ def serve_frontend():
 @app.route('/<path:path>')
 def serve_frontend_static(path):
     try:
-        if path != "" and os.path.exists(os.path.join('frontend/build', path)):
-            return send_from_directory('frontend/build', path)
-        else:
-            return send_from_directory('frontend/build', 'index.html')
+        logger.debug(f"Requested path: {path}")
+        # First, try to serve from the static directory
+        if path.startswith('static/'):
+            file_path = os.path.join('frontend/build', path)
+            directory = os.path.dirname(file_path)
+            filename = os.path.basename(file_path)
+            logger.debug(f"Trying to serve static file from: {directory}, filename: {filename}")
+            if os.path.exists(file_path):
+                return send_from_directory(directory, filename)
+        
+        # If not a static file or file doesn't exist, serve index.html
+        logger.debug("Serving index.html instead")
+        return send_from_directory('frontend/build', 'index.html')
+    
     except Exception as e:
         logger.error(f"Error serving static file {path}: {str(e)}")
+        return jsonify({
+            "error": str(e),
+            "path": path,
+            "cwd": os.getcwd(),
+            "files": os.listdir(os.path.join(os.getcwd(), 'frontend/build'))
+        }), 500
+    
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    try:
+        logger.debug(f"Serving static file: {filename}")
+        return send_from_directory('frontend/build/static', filename)
+    except Exception as e:
+        logger.error(f"Error serving static file {filename}: {str(e)}")
         return str(e), 500
 
 if __name__ == '__main__':
