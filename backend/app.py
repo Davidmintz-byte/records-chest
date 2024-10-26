@@ -296,59 +296,32 @@ def get_user_tags():
         logger.error(f"Error fetching tags: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# Frontend serving routes (must be last)
-@app.route('/')
-def serve_frontend():
+# Debug route to help us understand file structure
+@app.route('/debug-files')
+def debug_files():
     try:
-        logger.debug("Trying to serve frontend")
-        logger.debug(f"Current directory: {os.getcwd()}")
-        build_path = os.path.join(os.getcwd(), 'frontend', 'build')
-        logger.debug(f"Looking for build at: {build_path}")
-        logger.debug(f"Build directory exists: {os.path.exists(build_path)}")
+        current_dir = os.getcwd()
+        structure = {
+            'current_directory': current_dir,
+            'contents': os.listdir(current_dir),
+            'frontend_exists': os.path.exists('frontend'),
+            'frontend_build_exists': os.path.exists('frontend/build'),
+            'static_exists': os.path.exists('frontend/build/static'),
+        }
         
-        if not os.path.exists(build_path):
-            return jsonify({
-                "error": "Build directory not found",
-                "current_dir": os.getcwd(),
-                "build_path": build_path,
-                "directory_contents": os.listdir(os.getcwd())
-            }), 404
-            
-        return send_from_directory('frontend/build', 'index.html')
+        if os.path.exists('frontend/build'):
+            structure['build_contents'] = os.listdir('frontend/build')
+            if os.path.exists('frontend/build/static'):
+                structure['static_contents'] = os.listdir('frontend/build/static')
+                
+        return jsonify(structure)
     except Exception as e:
-        logger.error(f"Error serving frontend: {str(e)}")
         return jsonify({
-            "error": str(e),
-            "current_dir": os.getcwd(),
-            "directory_contents": os.listdir(os.getcwd())
-        }), 500
+            'error': str(e),
+            'current_dir': os.getcwd()
+        })
 
-@app.route('/<path:path>')
-def serve_frontend_static(path):
-    try:
-        logger.debug(f"Requested path: {path}")
-        # First, try to serve from the static directory
-        if path.startswith('static/'):
-            file_path = os.path.join('frontend/build', path)
-            directory = os.path.dirname(file_path)
-            filename = os.path.basename(file_path)
-            logger.debug(f"Trying to serve static file from: {directory}, filename: {filename}")
-            if os.path.exists(file_path):
-                return send_from_directory(directory, filename)
-        
-        # If not a static file or file doesn't exist, serve index.html
-        logger.debug("Serving index.html instead")
-        return send_from_directory('frontend/build', 'index.html')
-    
-    except Exception as e:
-        logger.error(f"Error serving static file {path}: {str(e)}")
-        return jsonify({
-            "error": str(e),
-            "path": path,
-            "cwd": os.getcwd(),
-            "files": os.listdir(os.path.join(os.getcwd(), 'frontend/build'))
-        }), 500
-    
+# Route specifically for static files
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     try:
@@ -356,6 +329,22 @@ def serve_static(filename):
         return send_from_directory('frontend/build/static', filename)
     except Exception as e:
         logger.error(f"Error serving static file {filename}: {str(e)}")
+        return str(e), 500
+
+# Serve index.html for root path
+@app.route('/')
+def serve_frontend():
+    return send_from_directory('frontend/build', 'index.html')
+
+# Catch-all route for other paths
+@app.route('/<path:path>')
+def serve_frontend_static(path):
+    try:
+        if os.path.exists(os.path.join('frontend/build', path)):
+            return send_from_directory('frontend/build', path)
+        return send_from_directory('frontend/build', 'index.html')
+    except Exception as e:
+        logger.error(f"Error serving path {path}: {str(e)}")
         return str(e), 500
 
 if __name__ == '__main__':
