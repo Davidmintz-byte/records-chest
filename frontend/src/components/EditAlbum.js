@@ -86,7 +86,7 @@ function EditAlbum({ album, onSave, onCancel }) {
 
   return (
     <div className="edit-album-form">
-      <h3>Edit Album</h3>
+      <h3>Edit album</h3>
       {error && <div className="error-message">{error}</div>}
       
       <div className="artwork-section">
