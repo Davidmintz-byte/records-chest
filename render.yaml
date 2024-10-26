@@ -4,17 +4,16 @@ services:
     env: python
     buildCommand: |
       # Build frontend
-      cd ../frontend
+      cd /opt/render/project/src/frontend
       npm install
       npm run build
       # Move build to backend
-      cd ..
-      mkdir -p backend/frontend
-      cp -r frontend/build backend/frontend/
+      mkdir -p /opt/render/project/src/backend/frontend
+      cp -r build /opt/render/project/src/backend/frontend/
       # Install backend dependencies
-      cd backend
+      cd /opt/render/project/src/backend
       pip install -r requirements.txt
-    startCommand: cd backend && gunicorn app:app
+    startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.6
