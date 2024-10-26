@@ -5,7 +5,6 @@ __pycache__/
 *.so
 .Python
 env/
-build/
 develop-eggs/
 dist/
 downloads/
@@ -31,7 +30,7 @@ node_modules/
 /.pnp
 .pnp.js
 /coverage
-/build
+/frontend/build   # Changed from /build to be specific
 .DS_Store
 .env.local
 .env.development.local
