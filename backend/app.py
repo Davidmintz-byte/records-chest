@@ -1,3 +1,4 @@
+# Imports
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify, make_response, send_from_directory
 import requests
@@ -16,51 +17,47 @@ import logging
 # Initialize Flask app
 app = Flask(__name__)
 
-# Set up logging
+# Setup logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Get environment variables first
+# Environment variables and configurations
 database_url = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
-# If using PostgreSQL (in production), modify the URL format
 if database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
-# Set the database URL in config
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+
 JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
 FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
-
-# Configure CORS
-app.config['CORS_HEADERS'] = 'Content-Type'
-CORS(app, resources={
-    r"/*": {
-        "origins": ["http://localhost:3000", "https://records-chest.onrender.com"],  # Add your Render domain
-        "methods": ["GET", "POST", "DELETE", "OPTIONS", "PUT"],
-        "allow_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
-    }
-})
-
-# Configuration for file uploads
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 STATIC_FOLDER = os.environ.get('STATIC_FOLDER', 'frontend/build')
 
-# Basic configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+# Flask app configurations
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Create uploads directory if it doesn't exist
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Initialize extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+
+# Configure CORS
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000", "https://records-chest.onrender.com"],
+        "methods": ["GET", "POST", "DELETE", "OPTIONS", "PUT"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
+
+# Create necessary directories
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 # Add this decorator to handle OPTIONS requests globally
 @app.before_request
