@@ -10,6 +10,7 @@ import os
 import time
 from werkzeug.utils import secure_filename
 from os import environ
+from urllib.parse import urlparse
 import logging
 
 # Set up logging
@@ -17,7 +18,12 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Get environment variables first
-DATABASE_URL = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
+database_url = environ.get('DATABASE_URL', 'sqlite:///record_chest.db')
+# If using PostgreSQL (in production), modify the URL format
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+# Set the database URL in config
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
 FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
 

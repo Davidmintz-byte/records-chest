@@ -3,7 +3,10 @@ services:
     name: records-chest
     env: python
     buildCommand: ./build.sh
-    startCommand: cd backend && gunicorn app:app
+    startCommand: |
+      cd backend
+      flask db upgrade
+      gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.6
@@ -11,3 +14,11 @@ services:
         value: https://records-chest.onrender.com
       - key: RENDER
         value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: record-chest-db
+          property: connectionString
+
+databases:
+  - name: record-chest-db
+    plan: free
