@@ -1,4 +1,6 @@
+from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify, make_response, send_from_directory
+import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
