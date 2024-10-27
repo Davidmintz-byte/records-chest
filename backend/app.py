@@ -13,6 +13,9 @@ from os import environ
 from urllib.parse import urlparse
 import logging
 
+# Initialize Flask app
+app = Flask(__name__)
+
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -26,9 +29,6 @@ if database_url.startswith('postgres://'):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 JWT_SECRET_KEY = environ.get('JWT_SECRET_KEY', 'your-secret-key')
 FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
-
-# Initialize Flask app
-app = Flask(__name__)
 
 # Configure CORS
 app.config['CORS_HEADERS'] = 'Content-Type'
