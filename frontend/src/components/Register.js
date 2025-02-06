@@ -1,29 +1,52 @@
 // Import necessary hooks from React
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';  // adjust the path based on your file location
 
 // Define the Register component
-function Register() {
+function Register({ onLoginSuccess }) {
   // State variables for email and password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Initialize the navigate hook
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      // First, register the user
+      const registerResponse = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-      const data = await response.json();
-      if (response.ok) {
-        console.log('Registration successful:', data);
-        // TODO: Add success message or redirect user
+      
+      if (registerResponse.ok) {
+        // If registration is successful, immediately log them in
+        const loginResponse = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (loginResponse.ok) {
+          const loginData = await loginResponse.json();
+          // Store the token in localStorage
+          localStorage.setItem('token', loginData.token);
+          // Call the onLoginSuccess callback to update app state
+          onLoginSuccess();
+          // Navigate to collection page
+          navigate('/collection');
+        } else {
+          console.error('Auto-login failed after registration');
+          navigate('/');
+        }
       } else {
+        const data = await registerResponse.json();
         console.error('Registration failed:', data.message);
         // TODO: Show error message to user
       }

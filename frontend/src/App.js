@@ -1,5 +1,6 @@
 // Import necessary modules
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import './App.css';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -54,43 +55,52 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      {isLoggedIn ? (
-        <>
-          <NavBar 
-            onLogout={handleLogout} 
-            onNavigate={handleNavigation}
-            currentView={currentView}
-          />
-          <main>
-            {renderLoggedInView()}
-          </main>
-        </>
-      ) : (
-        <>
-          <header className="header">
-            <h1>Record Chest</h1>
-          </header>
-          <main>
-            {showRegister ? (
-              <div>
-                <Register />
-                <button className="auth-button" onClick={() => setShowRegister(false)}>
-                  Already have an account? Login
-                </button>
-              </div>
-            ) : (
-              <div>
-                <Login onLoginSuccess={handleLoginSuccess} />
-                <button className="auth-button" onClick={() => setShowRegister(true)}>
-                  Need an account? Register
-                </button>
-              </div>
-            )}
-          </main>
-        </>
-      )}
-    </div>
+    <BrowserRouter>
+      <div className="app-container">
+        {isLoggedIn ? (
+          <>
+            <NavBar 
+              onLogout={handleLogout} 
+              onNavigate={handleNavigation}
+              currentView={currentView}
+            />
+            <main>
+              <Routes>
+                <Route path="/collection" element={<Collection refresh={refreshCollection} />} />
+                <Route path="/add" element={<AddAlbum onAlbumAdded={handleAlbumAdded} />} />
+                <Route path="/" element={<Navigate to="/collection" />} />
+              </Routes>
+            </main>
+          </>
+        ) : (
+          <>
+            <header className="header">
+              <h1>Record Chest</h1>
+            </header>
+            <main>
+              <Routes>
+                <Route path="/register" element={
+                  <div>
+                    <Register onLoginSuccess={handleLoginSuccess} />
+                    <Link to="/" className="auth-button">
+                      Already have an account? Login
+                    </Link>
+                  </div>
+                } />
+                <Route path="*" element={
+                  <div>
+                    <Login onLoginSuccess={handleLoginSuccess} />
+                    <Link to="/register" className="auth-button">
+                      Need an account? Register
+                    </Link>
+                  </div>
+                } />
+              </Routes>
+            </main>
+          </>
+        )}
+      </div>
+    </BrowserRouter>
   );
 }
 
