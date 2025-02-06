@@ -1,38 +1,49 @@
-// Import React
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { API_URL } from '../config';  // adjust the path based on your file location
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-// Define the NavBar component
-function NavBar({ onLogout }) {
-  const location = useLocation();
-  
-  return (
-    <nav className="nav-bar">
-      <div className="nav-brand">My Record Chest</div>
-      <div className="nav-links">
-        <Link 
-          to="/collection" 
-          className={`nav-button ${location.pathname === '/collection' ? 'active' : ''}`}
-        >
-          My Collection
-        </Link>
-        <Link 
-          to="/add" 
-          className={`nav-button ${location.pathname === '/add' ? 'active' : ''}`}
-        >
-          Add Album
-        </Link>
-        <button 
-          className="nav-button logout" 
-          onClick={onLogout}
-        >
-          Logout
-        </button>
-      </div>
-    </nav>
-  );
-}
+const NavBar = () => {
+    const navigate = useNavigate();
+    const { currentUser, logout } = useAuth();
 
-// Export the NavBar component
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error('Failed to log out:', error);
+        }
+    };
+
+    return (
+        <AppBar position="static">
+            <Toolbar>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    Record Chest
+                </Typography>
+                {currentUser ? (
+                    <>
+                        <Button color="inherit" onClick={() => navigate('/')}>
+                            Home
+                        </Button>
+                        <Button color="inherit" onClick={handleLogout}>
+                            Logout
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <Button color="inherit" onClick={() => navigate('/login')}>
+                            Login
+                        </Button>
+                        <Button color="inherit" onClick={() => navigate('/register')}>
+                            Register
+                        </Button>
+                    </>
+                )}
+            </Toolbar>
+        </AppBar>
+    );
+};
+
 export default NavBar;

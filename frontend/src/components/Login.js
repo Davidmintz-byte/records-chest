@@ -1,77 +1,88 @@
-// Import necessary hooks from React
 import React, { useState } from 'react';
-import { API_URL } from '../config';  // adjust the path based on your file location
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import {
+    Container,
+    Paper,
+    TextField,
+    Button,
+    Typography,
+    Box,
+    Alert
+} from '@mui/material';
 
-// Define the Login component with onLoginSuccess prop
-function Login({ onLoginSuccess }) {
-  // State variables for email and password
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  // State for error messages
-  const [error, setError] = useState('');
+const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-  // Function to handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(''); // Clear any previous errors
-    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await login(email, password);
+            navigate('/');
+        } catch (error) {
+            setError('Failed to login. Please check your credentials.');
+        }
+    };
 
-try {
-    const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-    });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        localStorage.setItem('token', data.access_token);
-        console.log('Login successful');
-        onLoginSuccess(); // Call the callback function
-      } else {
-        setError(data.message || 'Login failed');
-        console.error('Login failed:', data.message);
-      }
-    } catch (error) {
-      setError('Error connecting to server');
-      console.error('Error during login:', error);
-    }
-  };
+    return (
+        <Container maxWidth="sm">
+            <Box sx={{ mt: 8 }}>
+                <Paper elevation={3} sx={{ p: 4 }}>
+                    <Typography variant="h4" component="h1" gutterBottom align="center">
+                        Login
+                    </Typography>
+                    
+                    {error && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {error}
+                        </Alert>
+                    )}
 
-  // Render the login form
-  return (
-    <div className="login-container">
-      <h2>Login</h2>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
-  );
-}
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            fullWidth
+                            label="Email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            margin="normal"
+                            required
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Login
+                        </Button>
+                    </form>
+                    
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Link to="/register" style={{ textDecoration: 'none' }}>
+                            <Typography color="primary">
+                                Need an account? Register
+                            </Typography>
+                        </Link>
+                    </Box>
+                </Paper>
+            </Box>
+        </Container>
+    );
+};
 
-// Export the Login component
 export default Login;
